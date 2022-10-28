@@ -5,11 +5,6 @@ Created on Mon Oct 17 16:23:43 2022
 @author: bchicot
 """
 
-# import os
-
-# os.getcwd()
-# os.chdir("Documents/Perso")
-
 import math
 import pygame
 
@@ -17,6 +12,14 @@ fond = pygame.image.load('bank/image/fond.png')
 pygame.init()
 
 screen = pygame.display.set_mode((800, 800))
+
+class Human():
+    def __init__(self,liste_image):
+        self.buste = liste_image[0]
+        self.cuisse = liste_image[1]
+        self.mollet = liste_image[2]
+        self.bras = liste_image[3]
+        self.avant_bras = liste_image[4]
 
 class Image():
     def __init__(self,image,pos,originPos, attached = False, down = True):
@@ -60,6 +63,13 @@ class Image():
         angle = (frame - 10)**2 * ((angle_max-angle_min)/((10)**2)) + angle_min
         
         return(angle)
+    
+    def anim_sin(self,frame,angle_cote,per,h=0):
+        
+        angle = angle_cote*(math.sin((1/per)*(frame+h)))
+        
+        return(angle)
+    
         
 def boucle():
     gameExit=False
@@ -105,11 +115,13 @@ def boucle():
     rot = 0
     rot2 = 0
     rot0 = 0
+    rot_m = 0
 
     clock = pygame.time.Clock()
     
     action = False
     punch = False
+    walk = False
     
     while not gameExit:
 
@@ -124,6 +136,10 @@ def boucle():
                 if event.key == pygame.K_a:
                     frame = 0
                     punch = True
+
+                if event.key == pygame.K_z:
+                    frame = 0
+                    walk = True
                         
                 if event.key == pygame.K_UP and not action:
                     rot = 4
@@ -143,11 +159,19 @@ def boucle():
                     rot0 = -1
                 if event.key == pygame.K_RIGHT:
                     rot0 = 1
-                
+
+                if event.key == pygame.K_q:
+                    rot_m = -1
+                if event.key == pygame.K_s:
+                    rot_m = 1                
+
             if event.type == pygame.KEYUP:
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     rot0 = 0
+
+                if event.key == pygame.K_q or event.key == pygame.K_s:
+                    rot_m = 0
                 
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     rot = 0
@@ -201,14 +225,18 @@ def boucle():
 
         frame += 1
 
-        if punch and frame <= 20 :
-            base = torse.anim_punch(frame, 0, -5)
-            angle = img.anim_punch(frame, 60, 90)
-            angle2 = img2.anim_punch(frame, 160, 100)
-        else:
-            frame = 0
-            punch = False
+        # if punch and frame <= 20 :
+        #     base = torse.anim_punch(frame, 0, -5)
+        #     angle = img.anim_punch(frame, 60, 90)
+        #     angle2 = img2.anim_punch(frame, 160, 100)
+        # else:
+        #     frame = 0
 
+        if walk :
+            angle_cuisse = cuisse.anim_sin(frame, 28, 20)
+            angle_mollet = mollet.anim_sin(frame, -50, 20, h = 40)
+
+            
         if angle > angle2:
             angle2 = angle
             
@@ -236,8 +264,13 @@ def boucle():
             else:
                 angle2 += rot2
 
+        angle_cuisse += rot0
+        angle_mollet += rot_m
+        
         pygame.display.flip()
         pygame.display.update()
+        
+        print(angle_cuisse, angle_mollet)
 
         clock.tick(100)        
 
