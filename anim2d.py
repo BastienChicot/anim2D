@@ -22,7 +22,8 @@ class Human():
         self.avant_bras = liste_image[4]
 
 class Image():
-    def __init__(self,image,pos,originPos, attached = False, down = True):
+    def __init__(self,image,pos,originPos, attached = False, down = True , angle = 0):
+        self.angle = angle
         self.image = image
         self.attached = attached
         self.down = down
@@ -45,6 +46,10 @@ class Image():
         self.rotated_image_rect = self.rotated_image.get_rect(center = self.rotated_image_center)
         surf.blit(self.rotated_image, self.rotated_image_rect)
         
+    def update(self,surf):
+        self.__init__(self.image, self.pos, self.originPos, self.attached, self.down, self.angle)
+        self.blitRotate(surf, self.angle)
+        
     def update_pos(self,pos):
         if not self.attached:
             self.pos = pos
@@ -60,9 +65,9 @@ class Image():
         ##FONCTION PARABOLE MOUVEMENT
         # angle = (frame-(max_frame/2))² * ((angle_max-angle_min)/((frame-(max_frame/2))² -angle_min)+angle_min
         
-        angle = (frame - 10)**2 * ((angle_max-angle_min)/((10)**2)) + angle_min
+        self.angle = (frame - 10)**2 * ((angle_max-angle_min)/((10)**2)) + angle_min
         
-        return(angle)
+        return(self.angle)
     
     def anim_sin(self,frame,angle_cote,per,h=0):
         
@@ -74,53 +79,75 @@ class Image():
 def boucle():
     gameExit=False
     
+    frame = 0
+    
     pygame.init()
     size = (800,800)
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
-    
+
+    tete_img = pygame.image.load('bank/image/tete.png')    
     torse_image = pygame.image.load('bank/image/torse.png')
     cuisse_img = pygame.image.load('bank/image/cuisse.png')
     mollet_img = pygame.image.load('bank/image/mollet.png')
     image = pygame.image.load('bank/image/bras.png')
     image2 = pygame.image.load("bank/image/avant-bras.png")
+    main = pygame.image.load('bank/image/main.png')
+    pied = pygame.image.load('bank/image/shoe.png')
     
     pivot0 = (50,175)
     pivot = (25, 18)
     pivot2 = (10,18)
     pivot_nul = (40,18)
     pivot_mol = (0,18)
+    pivot_main = (15,-15)
+    pivot_pied = (32,-17)
+    pivot_tete = (50,140)
 
-    base = 0
-    angle_cuisse = 0
-    angle_mollet = 0
-    angle, frame = 60, 0
-    angle2 = 160
-    
     torse = Image(torse_image,(375,460),pivot0)
-    torse.blitRotate(screen, base)
+    torse.blitRotate(screen, torse.angle)
 
+    tete = Image(tete_img,torse,pivot_tete, attached = True)
+    tete.blitRotate(screen, tete.angle)
+    
     cuisse = Image(cuisse_img,torse,pivot_nul, attached = True, down = False)
-    cuisse.blitRotate(screen, angle_cuisse)
+    cuisse.blitRotate(screen, cuisse.angle)
 
     mollet = Image(mollet_img,cuisse,pivot_mol,attached=True)
-    mollet.blitRotate(screen,angle_mollet)
+    mollet.blitRotate(screen,mollet.angle)
+
+    pied_d = Image(pied,mollet,pivot_pied,attached=True)
+    pied_d.blitRotate(screen,pied_d.angle)
     
+    cuisse2 = Image(cuisse_img,torse,pivot_nul, attached = True, down = False)
+    cuisse2.blitRotate(screen, cuisse2.angle)
+
+    mollet2 = Image(mollet_img,cuisse2,pivot_mol,attached=True)
+    mollet2.blitRotate(screen,mollet2.angle)
+
+    pied_g = Image(pied,mollet2,pivot_pied,attached=True)
+    pied_g.blitRotate(screen,pied_g.angle)
+        
     img = Image(image,torse,pivot,attached=True)
-    img.blitRotate(screen,angle)
+    img.blitRotate(screen,img.angle)
         
     img2 = Image(image2,img,pivot2,attached=True)
-    img2.blitRotate(screen,angle2)
+    img2.blitRotate(screen,img2.angle)
+
+    main_d = Image(main,img2,pivot_main,attached=True)
+    main_d.blitRotate(screen,main_d.angle)
     
-    rot = 0
-    rot2 = 0
-    rot0 = 0
-    rot_m = 0
+    bras_g = Image(image,torse,pivot,attached=True)
+    bras_g.blitRotate(screen,bras_g.angle)
+        
+    av_bras = Image(image2,bras_g,pivot2,attached=True)
+    av_bras.blitRotate(screen,av_bras.angle)
+
+    main_g = Image(main,av_bras,pivot_main,attached=True)
+    main_g.blitRotate(screen,main_g.angle)
 
     clock = pygame.time.Clock()
     
-    action = False
-    punch = False
     walk = False
     
     while not gameExit:
@@ -130,77 +157,98 @@ def boucle():
                 gameExit = True
             if event.type == pygame.KEYDOWN:
 
-                if event.key == pygame.K_RETURN:
-                    action = True
-                
-                if event.key == pygame.K_a:
-                    frame = 0
-                    punch = True
-
                 if event.key == pygame.K_z:
                     frame = 0
                     walk = True
-                        
-                if event.key == pygame.K_UP and not action:
-                    rot = 4
-                    rot2 = 4
-                if event.key == pygame.K_UP and action:
-                    rot = 4
-                    rot2 = 8
-       
-                if event.key == pygame.K_DOWN and angle == angle2:
-                    rot = -4
-                    rot2 = -4
-                if event.key == pygame.K_DOWN and angle != angle2:
-                    rot = -4
-                    rot2 = -8
 
-                if event.key == pygame.K_LEFT:
-                    rot0 = -1
-                if event.key == pygame.K_RIGHT:
-                    rot0 = 1
 
-                if event.key == pygame.K_q:
-                    rot_m = -1
-                if event.key == pygame.K_s:
-                    rot_m = 1                
-
-            if event.type == pygame.KEYUP:
-
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                    rot0 = 0
-
-                if event.key == pygame.K_q or event.key == pygame.K_s:
-                    rot_m = 0
-                
-                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                    rot = 0
-                    rot2 = 0
-                if event.key == pygame.K_RETURN:
-                    action = False
                     
         screen.blit(fond,(0,0))
 
-        pos0 = (375,460)
-        torse.blitRotate(screen, base)
+        pos0 = torse.originPos
         
+        if walk :
+            tete.angle = tete.anim_sin(frame, 5, 20)
+            
+            cuisse.angle = cuisse.anim_sin(frame, 30, 20)
+            mollet.angle = mollet.anim_sin(frame, 60, 20, h = -6)
+            pied_d.angle = pied_d.anim_sin(frame, 60, 20, h = -6)
+            cuisse2.angle = cuisse2.anim_sin(frame, -30, 20)
+            mollet2.angle = mollet2.anim_sin(frame, -60, 20, h = 6)
+            pied_g.angle = pied_g.anim_sin(frame, -60, 20, h = 6)
+
+            img.angle = img.anim_sin(frame, 10, 20)
+            img2.angle = img2.anim_sin(frame, 45, 20, h = -6)
+            main_d.angle = main_d.anim_sin(frame, 45, 20, h = -6)
+            bras_g.angle = bras_g.anim_sin(frame, -10, 20)
+            av_bras.angle = av_bras.anim_sin(frame, -45, 20, h = -6)
+            main_g.angle = main_g.anim_sin(frame, -45, 20, h = -6)
+            
+        if img.angle > img2.angle :
+            img2.angle = img.angle
+        if img2.angle > main_d.angle :
+            main_d.angle = img2.angle
+            
+        if bras_g.angle > av_bras.angle :
+            av_bras.angle = bras_g.angle
+        if av_bras.angle > main_g.angle :
+            main_g.angle = av_bras.angle
+
+        if cuisse.angle < mollet.angle :
+            mollet.angle = cuisse.angle
+        if mollet.angle < pied_d.angle :
+            pied_d.angle = mollet.angle
+
+        if cuisse2.angle < mollet2.angle :
+            mollet2.angle = cuisse2.angle
+        if mollet2.angle < pied_g.angle :
+            pied_g.angle = mollet2.angle
+            
         pos = img.pos
         pos2 = img2.pos
         pos3 = cuisse.pos
         pos4 = mollet.pos
-        
-        cuisse = Image(cuisse_img,torse,pivot_nul, attached = True, down = False)
-        cuisse.blitRotate(screen, angle_cuisse)
-        torse.blitRotate(screen, base)
 
-        mollet = Image(mollet_img,cuisse,pivot_mol,attached=True)
-        mollet.blitRotate(screen,angle_mollet)
+        tete = Image(tete_img,torse,pivot_tete, attached = True, angle=tete.angle)
+        tete.blitRotate(screen, tete.angle)
         
-        img = Image(image,torse,pivot,attached=True)
-        img.blitRotate(screen,angle)
+        bras_g = Image(image,torse,bras_g.originPos,attached=True, angle=bras_g.angle)
+        bras_g.blitRotate(screen,bras_g.angle)
+            
+        av_bras = Image(image2,bras_g,av_bras.originPos,attached=True, angle=av_bras.angle)
+        av_bras.blitRotate(screen,av_bras.angle)
 
-        img2 = Image(image2,img,pivot2,attached=True)
-        img2.blitRotate(screen,angle2)
+        main_g = Image(main,av_bras,pivot_main,attached=True, angle=main_g.angle)
+        main_g.blitRotate(screen,main_g.angle)
+        
+        cuisse = Image(cuisse_img,torse,cuisse.originPos, attached = True, down = False, angle=cuisse.angle)
+        cuisse.blitRotate(screen, cuisse.angle)
+      
+        cuisse2 = Image(cuisse_img,torse,cuisse2.originPos, attached = True, down = False, angle=cuisse2.angle)
+        cuisse2.blitRotate(screen, cuisse2.angle)
+                
+        torse.blitRotate(screen, torse.angle)
+
+        mollet = Image(mollet_img,cuisse,mollet.originPos,attached=True, angle=mollet.angle)
+        mollet.blitRotate(screen,mollet.angle)
+        
+        pied_d = Image(pied,mollet,pivot_pied,attached=True, angle=pied_d.angle)
+        pied_d.blitRotate(screen,pied_d.angle)
+        
+        mollet2 = Image(mollet_img,cuisse2,mollet2.originPos,attached=True, angle=mollet2.angle)
+        mollet2.blitRotate(screen,mollet2.angle)
+
+        pied_g = Image(pied,mollet2,pivot_pied,attached=True, angle=pied_g.angle)
+        pied_g.blitRotate(screen,pied_g.angle)
+        
+        img = Image(image,torse,img.originPos,attached=True, angle = img.angle)
+        img.blitRotate(screen,img.angle)
+
+        img2 = Image(image2,img,img2.originPos,attached=True, angle=img2.angle)
+        img2.blitRotate(screen,img2.angle)
+
+        main_d = Image(main,img2,pivot_main,attached=True, angle=main_d.angle)
+        main_d.blitRotate(screen,main_d.angle)
 
         pygame.draw.line(screen, (0, 255, 0), (pos0[0]-20, pos0[1]), (pos0[0]+20, pos0[1]), 3)
         pygame.draw.line(screen, (0, 255, 0), (pos0[0], pos0[1]-20), (pos0[0], pos0[1]+20), 3)
@@ -232,45 +280,13 @@ def boucle():
         # else:
         #     frame = 0
 
-        if walk :
-            angle_cuisse = cuisse.anim_sin(frame, 28, 20)
-            angle_mollet = mollet.anim_sin(frame, -50, 20, h = 40)
 
-            
-        if angle > angle2:
-            angle2 = angle
-            
-        if 152 >= angle > -72 :
-            angle += rot
-            angle2 += rot2
-            
-        elif angle <= -72:
-            if rot < 0:
-                rot = 0
-                angle = angle
-            else:
-                angle += rot
-        elif angle > 152:
-            if rot > 0:
-                rot = 0
-                angle = angle
-            else:
-                angle += rot
 
-        if angle2 >= 220 :
-            if rot2 > 0:
-                rot2 = 0
-                angle2 = angle2                
-            else:
-                angle2 += rot2
+        print(cuisse.angle, mollet.angle)
 
-        angle_cuisse += rot0
-        angle_mollet += rot_m
         
         pygame.display.flip()
         pygame.display.update()
-        
-        print(angle_cuisse, angle_mollet)
 
         clock.tick(100)        
 
