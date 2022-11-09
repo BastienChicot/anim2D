@@ -85,12 +85,12 @@ class Bonhomme():
 
         if self.cuisse_d.angle < self.mollet_d.angle :
             self.mollet_d.angle = self.cuisse_d.angle
-        if self.mollet_d.angle < self.pied_d.angle :
+        if self.mollet_d.angle + 45 < self.pied_d.angle :
             self.pied_d.angle = self.mollet_d.angle
         
         if self.cuisse_g.angle < self.mollet_g.angle :
             self.mollet_g.angle = self.cuisse_g.angle
-        if self.mollet_g.angle < self.pied_g.angle :
+        if self.mollet_g.angle + 45 < self.pied_g.angle :
             self.pied_g.angle = self.mollet_g.angle
 
 
@@ -187,16 +187,187 @@ class Bonhomme():
             self.main_d.angle = self.main_d.anim_parabole(frame, 160, 100)
 
             self.bras_g.angle = 80
-            self.av_bras_g.angle = 150
-            self.main_g.angle = 150
+            self.av_bras_g.angle = self.av_bras_g.anim_parabole(frame, 150, 180)
+            self.main_g.angle = self.main_g.anim_parabole(frame, 150, 180)
 
-            self.cuisse_g.angle = self.cuisse_g.anim_parabole(frame, 20, 35)
+            self.cuisse_g.angle = self.cuisse_g.anim_parabole(frame, 20, 30)
+            self.mollet_g.angle = self.mollet_g.anim_parabole(frame, 0, -10)
+            self.pied_g.angle = self.pied_d.anim_parabole(frame, 0, -10)
+
+            self.cuisse_d.angle = -10
+            self.mollet_d.angle = -20
+            self.pied_d.angle = self.pied_d.anim_parabole(frame, -2, 0)
+            
+            val = True
+            
+        else:
+            frame = 0
+            val = False
+            self.Garde()
+            
+        return(frame,val)
+            
+        self.check_angle()
+
+    def Gauche(self, frame):
+        if frame < 20 :
+            self.buste.angle = self.buste.anim_parabole(frame, 0, -5)
+            
+            self.bras_g.angle = self.bras_g.anim_parabole(frame, 75, 105)
+            self.av_bras_g.angle = self.av_bras_g.anim_parabole(frame, 150, 100)
+            self.main_g.angle = self.main_g.anim_parabole(frame, 150, 100)
+
+            self.bras_d.angle = self.bras_d.anim_parabole(frame, 35, 50)
+            self.av_bras_d.angle = 160
+            self.main_d.angle = 160
+
+            self.cuisse_g.angle = self.cuisse_g.anim_parabole(frame, 20, 30)
             self.mollet_g.angle = self.mollet_g.anim_parabole(frame, 0, -10)
             self.pied_g.angle = self.pied_g.anim_parabole(frame, 0, -2)
 
             self.cuisse_d.angle = -10
-            self.mollet_d.angle = self.mollet_d.anim_parabole(frame, -20, -35)
+            self.mollet_d.angle = -20
             self.pied_d.angle = self.pied_d.anim_parabole(frame, -2, 0)
+            
+            val = True
+            
+        else:
+            frame = 0
+            val = False
+            self.Garde()
+            
+        return(frame,val)
+            
+        self.check_angle()
+
+    def Upercut_D(self, frame):
+        if frame < 20 :
+            self.tete.angle = self.tete.anim_parabole(frame, 0, -8)
+            
+            self.buste.angle = self.buste.anim_parabole(frame, 0, -5)
+            
+            self.bras_d.angle = self.bras_d.anim_sin(frame, -50, 4) + 50
+            self.av_bras_d.angle = self.av_bras_d.anim_sin(frame, -50, 10) + 160
+            self.main_d.angle = self.main_d.anim_sin(frame, -50, 10) + 160
+
+            self.bras_g.angle = 80
+            self.av_bras_g.angle = self.av_bras_g.anim_parabole(frame, 150, 180)
+            self.main_g.angle = self.main_g.anim_parabole(frame, 150, 180)
+
+            self.cuisse_g.angle = 20
+            self.mollet_g.angle = 0
+            self.pied_g.angle = 0
+
+            self.cuisse_d.angle = self.cuisse_d.anim_parabole(frame, -10, 0)
+            self.mollet_d.angle = self.mollet_d.anim_parabole(frame, -20, -30)
+            self.pied_d.angle = -2
+            
+            val = True
+            
+        else:
+            frame = 0
+            val = False
+            self.Garde()
+            
+        return(frame,val)
+            
+        self.check_angle()
+
+    def Upercut_G(self, frame):
+        if frame < 20 :
+            self.tete.angle = self.tete.anim_parabole(frame, 0, -8)
+
+            self.buste.angle = self.buste.anim_parabole(frame, 0, -5)
+            
+            self.bras_d.angle = self.bras_d.anim_parabole(frame, 35, 50)
+            self.av_bras_d.angle = 160
+            self.main_d.angle = 160
+
+            self.bras_g.angle = self.bras_g.anim_sin(frame, -80, 5) + 80
+            self.av_bras_g.angle = self.av_bras_g.anim_sin(frame, -50, 6) + 150
+            self.main_g.angle = self.main_g.anim_sin(frame, -50, 6) + 150
+
+            self.cuisse_g.angle = 20
+            self.mollet_g.angle = 0
+            self.pied_g.angle = 0
+
+            self.cuisse_d.angle = self.cuisse_d.anim_parabole(frame, -10, 0)
+            self.mollet_d.angle = self.mollet_d.anim_parabole(frame, -20, -30)
+            self.pied_d.angle = -2
+            
+            val = True
+            
+        else:
+            frame = 0
+            val = False
+            self.Garde()
+            
+        return(frame,val)
+            
+        self.check_angle()
+        
+    def Chasse_G(self, frame):
+        if frame < 30 :
+            self.tete.angle = self.tete.anim_parabole(frame, 0, -8, halframe = 15)
+
+            self.buste.angle = self.buste.anim_parabole(frame, 0, 10, halframe = 15)
+            
+            self.bras_d.angle = self.bras_d.anim_parabole(frame, 35, 50, halframe = 15)
+            self.av_bras_d.angle = 160
+            self.main_d.angle = 160
+    
+            self.bras_g.angle = 80
+            self.av_bras_g.angle = self.av_bras_g.anim_parabole(frame, 150, 180, halframe = 15)
+            self.main_g.angle = self.main_g.anim_parabole(frame, 150, 180, halframe = 15)
+
+            self.cuisse_g.angle = self.cuisse_g.anim_parabole(frame, 20, 110, halframe = 15)
+            if frame < 12:
+                self.mollet_g.angle = 0
+                self.pied_g.angle = 0
+            else:
+                self.mollet_g.angle = self.mollet_g.anim_parabole(frame - 12, 0, 75, halframe = 9)
+                self.pied_g.angle = self.pied_g.anim_parabole(frame - 12, 0, 75, halframe = 9)
+
+            self.cuisse_d.angle = self.cuisse_d.anim_parabole(frame, -10, 0, halframe = 15)
+            self.mollet_d.angle = self.mollet_d.anim_parabole(frame, -20, -30, halframe = 15)
+            self.pied_d.angle = -2
+            
+            val = True
+            
+        else:
+            frame = 0
+            val = False
+            self.Garde()
+            
+        return(frame,val)
+            
+        self.check_angle()
+
+    def Chasse_D(self, frame):
+        if frame < 30 :
+            self.tete.angle = self.tete.anim_parabole(frame, 0, -8, halframe = 15)
+
+            self.buste.angle = self.buste.anim_parabole(frame, 0, 10, halframe = 15)
+            
+            self.bras_d.angle = self.bras_d.anim_parabole(frame, 35, 50, halframe = 15)
+            self.av_bras_d.angle = 160
+            self.main_d.angle = 160
+    
+            self.bras_g.angle = 80
+            self.av_bras_g.angle = self.av_bras_g.anim_parabole(frame, 150, 180, halframe = 15)
+            self.main_g.angle = self.main_g.anim_parabole(frame, 150, 180, halframe = 15)
+
+            self.cuisse_d.angle = self.cuisse_d.anim_parabole(frame, 20, 110, halframe = 15)
+            if frame < 12:
+                self.mollet_d.angle = 0
+                self.pied_d.angle = 0
+            else:
+                self.mollet_d.angle = self.mollet_d.anim_parabole(frame - 12, 0, 75, halframe = 9)
+                self.pied_d.angle = self.pied_d.anim_parabole(frame - 12, 0, 75, halframe = 9)
+
+            self.cuisse_g.angle = self.cuisse_g.anim_parabole(frame, 20, -10, halframe = 15)
+            self.mollet_g.angle = self.mollet_g.anim_parabole(frame, 0, -35, halframe = 15)
+            self.pied_g.angle = self.pied_g.anim_parabole(frame, 0, -5, halframe = 15)
             
             val = True
             
@@ -249,11 +420,11 @@ class Image():
             
         return(self.pos)
 
-    def anim_parabole(self,frame, angle_max, angle_min):
+    def anim_parabole(self,frame, angle_max, angle_min, halframe = 10):
         ##FONCTION PARABOLE MOUVEMENT
         # angle = (frame-(max_frame/2))² * ((angle_max-angle_min)/((frame-(max_frame/2))² -angle_min)+angle_min
         
-        self.angle = (frame - 10)**2 * ((angle_max-angle_min)/((10)**2)) + angle_min
+        self.angle = (frame - halframe)**2 * ((angle_max-angle_min)/((halframe)**2)) + angle_min
         
         return(self.angle)
     
@@ -292,6 +463,11 @@ def boucle():
     
     walk = False
     punch = False
+    gauche = False
+    upercut_d = False
+    upercut_g = False
+    chasse_g = False
+    chasse_d = False
     
     while not gameExit:
 
@@ -304,9 +480,59 @@ def boucle():
                     # frame = 0
                     walk = True
 
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_p:
                     frame = 0
                     punch = True
+                    gauche = False
+                    upercut_d = False
+                    upercut_g = False
+                    chasse_g = False
+                    chasse_d = False
+
+                if event.key == pygame.K_a:
+                    frame = 0
+                    gauche = True
+                    punch = False
+                    upercut_d = False
+                    upercut_g = False
+                    chasse_g = False
+                    chasse_d = False
+
+                if event.key == pygame.K_l:
+                    frame = 0
+                    gauche = False
+                    punch = False
+                    upercut_d = True
+                    upercut_g = False
+                    chasse_g = False
+                    chasse_d = False
+
+                if event.key == pygame.K_q:
+                    frame = 0
+                    gauche = False
+                    punch = False
+                    upercut_d = False
+                    upercut_g = True
+                    chasse_g = False
+                    chasse_d = False
+
+                if event.key == pygame.K_s:
+                    frame = 0
+                    gauche = False
+                    punch = False
+                    upercut_d = False
+                    upercut_g = False
+                    chasse_g = True
+                    chasse_d = False
+
+                if event.key == pygame.K_k:
+                    frame = 0
+                    gauche = False
+                    punch = False
+                    upercut_d = False
+                    upercut_g = False
+                    chasse_g = False
+                    chasse_d = True
                     
             if event.type == pygame.KEYUP:
                 
@@ -322,8 +548,23 @@ def boucle():
         
         Gus.Walk(frame, walk)
             
-        if punch:
+        if punch :
             frame,punch = Gus.Punch(frame)
+
+        if gauche :
+            frame,gauche = Gus.Gauche(frame)
+
+        if upercut_d :
+            frame,upercut_d = Gus.Upercut_D(frame)
+
+        if upercut_g :
+            frame,upercut_g = Gus.Upercut_G(frame)
+
+        if chasse_g :
+            frame,chasse_g = Gus.Chasse_G(frame)
+
+        if chasse_d :
+            frame,chasse_d = Gus.Chasse_D(frame)
 
         Gus.Update(screen)
 
