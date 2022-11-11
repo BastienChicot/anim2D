@@ -26,7 +26,14 @@ class Bonhomme():
         self.img_av_bras = pygame.image.load(self.path+"\\"+str(liste_element[6])+".png")    
         self.img_main = pygame.image.load(self.path+"\\"+str(liste_element[7])+".png") 
         
-        self.base = (375,460)
+        self.x = 375
+        self.y = 460
+        self.move_x = 0
+        self.move_y = 0
+        self.base = (self.x,self.y)
+        
+        self.gauche = pygame.key.key_code("LEFT")
+        self.droite = pygame.key.key_code("RIGHT")
         
         self.pivot_tete = (50,140)
         self.pivot_buste = (50,175)
@@ -92,8 +99,67 @@ class Bonhomme():
             self.mollet_g.angle = self.cuisse_g.angle
         if self.mollet_g.angle + 45 < self.pied_g.angle :
             self.pied_g.angle = self.mollet_g.angle
-
-
+            
+    def Move(self,evenement,frame):           
+          # Condition becomes true when keyboard is pressed   
+        if evenement.type == pygame.KEYDOWN:
+       
+            # if e.key == self.saut :
+            #     self.jump = True
+                
+            # if e.key == self.descend :
+            #     self.fall = True
+                
+            if evenement.key == self.gauche :
+                self.move_x = -5
+                
+            if evenement.key == self.droite :
+                self.move_x = 5
+                                
+        if evenement.type == pygame.KEYUP:
+       
+            # if e.key == self.saut :
+            #     self.jump = False
+                
+            # if e.key == self.descend :
+            #     self.fall = False
+                
+            if evenement.key == self.gauche :
+                self.move_x = 0
+    
+            if evenement.key == self.droite :
+                self.move_x = 0
+                
+        return(self.move_x,self.move_y)
+    
+    def Deplacement(self, frame, val):
+        
+        if val :
+    
+            self.tete.angle = self.tete.anim_sin(frame, 1, 5)
+            
+            self.cuisse_d.angle = self.cuisse_d.anim_sin(frame, -5, 5, h = 10) - 15
+            self.mollet_d.angle = self.mollet_d.anim_sin(frame, -5, 5, h = 20) - 35 
+            self.pied_d.angle = self.pied_d.anim_sin(frame, -5, 5, h = 20) - 10
+    
+            self.cuisse_g.angle = self.cuisse_g.anim_sin(frame, 5, 5) + 30
+            self.mollet_g.angle = self.mollet_g.anim_sin(frame, 5, 5, h = -10)
+            self.pied_g.angle = self.pied_g.anim_sin(frame, 5, 5, h = -10)
+    
+            self.bras_d.angle = self.bras_d.anim_sin(frame, 2, 5) + 35
+            self.av_bras_d.angle = self.av_bras_d.anim_sin(frame, 1, 5) + 160
+            self.main_d.angle = self.main_d.anim_sin(frame, 1, 5) + 160
+    
+            self.bras_g.angle = self.bras_d.anim_sin(frame, 2, 5) + 80
+            self.av_bras_g.angle = self.av_bras_g.anim_sin(frame, 1, 5) + 150
+            self.main_g.angle = self.main_g.anim_sin(frame, 1, 5) + 150
+            
+        else :
+            
+            self.Garde()
+            
+        self.check_angle()
+            
     def Update(self,screen):
 
         self.tete = Image(self.img_tete,self.buste,self.pivot_tete, attached = True, angle = self.tete.angle)        
@@ -462,6 +528,7 @@ def boucle():
     clock = pygame.time.Clock()
     
     walk = False
+    bouge = False
     punch = False
     gauche = False
     upercut_d = False
@@ -474,6 +541,9 @@ def boucle():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gameExit = True
+            
+            Gus.move_x, Gus.move_y = Gus.Move(event,frame)
+            
             if event.type == pygame.KEYDOWN:
 
                 if event.key == pygame.K_z:
@@ -543,10 +613,20 @@ def boucle():
                 # if event.key == pygame.K_a:
                 #     punch = False
 
+        if Gus.move_x != 0:
+            bouge = True
+        else:
+            bouge = False
+            
+        Gus.x += Gus.move_x
+        Gus.y += Gus.move_y
+        
+        Gus.base = (Gus.x,Gus.y)
                     
         screen.blit(fond,(0,0))
         
         Gus.Walk(frame, walk)
+        Gus.Deplacement(frame, bouge)
             
         if punch :
             frame,punch = Gus.Punch(frame)
