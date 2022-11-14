@@ -14,17 +14,30 @@ pygame.init()
 screen = pygame.display.set_mode((800, 800))
 
 class Bonhomme():
-    def __init__(self,liste_element):
+    def __init__(self,liste_element, side = True):
         self.path = "bank\\image"
         
-        self.img_tete = pygame.image.load(self.path+"\\"+str(liste_element[0])+".png")    
-        self.img_buste = pygame.image.load(self.path+"\\"+str(liste_element[1])+".png")    
-        self.img_cuisse = pygame.image.load(self.path+"\\"+str(liste_element[2])+".png")    
-        self.img_mollet = pygame.image.load(self.path+"\\"+str(liste_element[3])+".png")    
-        self.img_pied = pygame.image.load(self.path+"\\"+str(liste_element[4])+".png")    
-        self.img_bras = pygame.image.load(self.path+"\\"+str(liste_element[5])+".png")    
-        self.img_av_bras = pygame.image.load(self.path+"\\"+str(liste_element[6])+".png")    
-        self.img_main = pygame.image.load(self.path+"\\"+str(liste_element[7])+".png") 
+        self.side = side
+        
+        if side :        
+            self.img_tete = pygame.image.load(self.path+"\\"+str(liste_element[0])+".png")    
+            self.img_buste = pygame.image.load(self.path+"\\"+str(liste_element[1])+".png")    
+            self.img_cuisse = pygame.image.load(self.path+"\\"+str(liste_element[2])+".png")    
+            self.img_mollet = pygame.image.load(self.path+"\\"+str(liste_element[3])+".png")    
+            self.img_pied = pygame.image.load(self.path+"\\"+str(liste_element[4])+".png")    
+            self.img_bras = pygame.image.load(self.path+"\\"+str(liste_element[5])+".png")    
+            self.img_av_bras = pygame.image.load(self.path+"\\"+str(liste_element[6])+".png")    
+            self.img_main = pygame.image.load(self.path+"\\"+str(liste_element[7])+".png") 
+            
+        else : 
+            self.img_tete = pygame.transform.flip(pygame.image.load(self.path+"\\"+str(liste_element[0])+".png"), True, False)    
+            self.img_buste = pygame.transform.flip(pygame.image.load(self.path+"\\"+str(liste_element[1])+".png"), True, False)    
+            self.img_cuisse = pygame.transform.flip(pygame.image.load(self.path+"\\"+str(liste_element[2])+".png"), True, False)    
+            self.img_mollet = pygame.transform.flip(pygame.image.load(self.path+"\\"+str(liste_element[3])+".png"), True, False)    
+            self.img_pied = pygame.transform.flip(pygame.image.load(self.path+"\\"+str(liste_element[4])+".png"), True, False)    
+            self.img_bras = pygame.transform.flip(pygame.image.load(self.path+"\\"+str(liste_element[5])+".png"), True, False)    
+            self.img_av_bras = pygame.transform.flip(pygame.image.load(self.path+"\\"+str(liste_element[6])+".png"), True, False)    
+            self.img_main = pygame.transform.flip(pygame.image.load(self.path+"\\"+str(liste_element[7])+".png"), True, False) 
         
         self.x = 375
         self.y = 460
@@ -76,6 +89,10 @@ class Bonhomme():
         self.av_bras_g.blitRotate(screen,self.av_bras_g.angle)
         self.main_g = Image(self.img_main,self.av_bras_g,self.pivot_main,attached=True)
         self.main_g.blitRotate(screen,self.main_g.angle)
+        
+        self.liste_membre = [self.buste,self.tete,self.bras_d,self.bras_g,self.av_bras_d,
+                             self.av_bras_g,self.main_d,self.main_g,self.cuisse_d,
+                             self.cuisse_g,self.mollet_d,self.mollet_g,self.pied_d,self.pied_g]
 
 
     def check_angle(self):
@@ -159,8 +176,25 @@ class Bonhomme():
             self.Garde()
             
         self.check_angle()
+        
+    def Collision(self,objet,frame):
+        
+        if abs(objet.image_rect.left - self.main_g.image_rect.right) < 10:
+            objet.angle = objet.anim_parabole(frame + 1, 45, 0)
+            objet.image_rect.left = self.main_g.image_rect.right + 10
+        if abs(objet.image_rect.left - self.main_d.image_rect.right) < 10:
+            objet.angle = objet.anim_parabole(frame, 45, 0)
+        if abs(objet.image_rect.left - self.pied_g.image_rect.right) < 10:
+            objet.angle = objet.anim_parabole(frame, 45, 0)
+        if abs(objet.image_rect.left - self.pied_d.image_rect.right) < 10:
+            objet.angle = objet.anim_parabole(frame, 45, 0)
             
-    def Update(self,screen):
+        else:
+            objet.angle = 0
+            
+        objet.blitRotate(screen, objet.angle)
+            
+    def Update(self,screen,objet,frame):
 
         self.tete = Image(self.img_tete,self.buste,self.pivot_tete, attached = True, angle = self.tete.angle)        
         self.tete.blitRotate(screen, self.tete.angle)
@@ -196,28 +230,51 @@ class Bonhomme():
         self.main_d = Image(self.img_main,self.av_bras_d,self.pivot_main,attached=True, angle = self.main_d.angle)
         self.main_d.blitRotate(screen,self.main_d.angle)
         
+        self.Collision(objet,frame)
+        
         self.check_angle()
         
     def Garde(self):
-        self.buste.angle = 0
+        if self.side :
+            self.buste.angle = 0
+                
+            self.bras_d.angle = 35
+            self.av_bras_d.angle = 160
+            self.main_d.angle = 160
+    
+            self.bras_g.angle = 80
+            self.av_bras_g.angle = 150
+            self.main_g.angle = 150
+    
+            self.cuisse_g.angle = 20
+            self.mollet_g.angle = 0
+            self.pied_g.angle = 0
+    
+            self.cuisse_d.angle = -10
+            self.mollet_d.angle = -20
+            self.pied_d.angle = -2
             
-        self.bras_d.angle = 35
-        self.av_bras_d.angle = 160
-        self.main_d.angle = 160
-
-        self.bras_g.angle = 80
-        self.av_bras_g.angle = 150
-        self.main_g.angle = 150
-
-        self.cuisse_g.angle = 20
-        self.mollet_g.angle = 0
-        self.pied_g.angle = 0
-
-        self.cuisse_d.angle = -10
-        self.mollet_d.angle = -20
-        self.pied_d.angle = -2
+        else: 
+            self.buste.angle = 0
+                
+            self.bras_d.angle = -35
+            self.av_bras_d.angle = -160
+            self.main_d.angle = -160
+    
+            self.bras_g.angle = -80
+            self.av_bras_g.angle = -150
+            self.main_g.angle = -150
+    
+            self.cuisse_g.angle = -20
+            self.mollet_g.angle = 0
+            self.pied_g.angle = 0
+    
+            self.cuisse_d.angle = 10
+            self.mollet_d.angle = 20
+            self.pied_d.angle = 2
+            
+        self.check_angle()       
         
-        self.check_angle()        
                 
     def Walk(self,frame,val):
 
@@ -471,9 +528,10 @@ class Image():
         self.rotated_image_rect = self.rotated_image.get_rect(center = self.rotated_image_center)
         surf.blit(self.rotated_image, self.rotated_image_rect)
         
-    def update(self,surf):
-        self.__init__(self.image, self.pos, self.originPos, self.attached, self.down, self.angle)
-        self.blitRotate(surf, self.angle)
+    def update(self,surf,objet):
+        print(abs(objet.image_rect.left - self.image_rect.right))
+        # self.__init__(self.image, self.pos, self.originPos, self.attached, self.down, self.angle)
+        # self.blitRotate(surf, self.angle)
         
     def update_pos(self,pos):
         if not self.attached:
@@ -504,12 +562,18 @@ class Image():
 def boucle():
     gameExit=False
     
+    pb_img = pygame.image.load("bank\\image\\punching_ball.png") 
+    pivot_pb = (25,-100)
+    pb = Image(pb_img,(575,50),pivot_pb)
+    
     frame = 0
     
     pygame.init()
     size = (800,800)
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
+    
+    pb.blitRotate(screen, 0)
     
     liste_element = [
         "tete",
@@ -646,8 +710,12 @@ def boucle():
         if chasse_d :
             frame,chasse_d = Gus.Chasse_D(frame)
 
-        Gus.Update(screen)
-
+        Gus.Update(screen,pb,frame)
+        
+        
+                    
+        pb.blitRotate(screen, pb.angle)
+        
         frame += 1
         
         pygame.display.flip()
